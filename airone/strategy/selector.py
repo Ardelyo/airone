@@ -48,6 +48,7 @@ class StrategySelector:
         # --- 1. Apply each rule ---
         candidates.extend(self._rule_procedural_gradient(report))
         candidates.extend(self._rule_procedural_cad(report))
+        candidates.extend(self._rule_semantic_json(report))
         candidates.extend(self._rule_semantic_pdf(report))
         candidates.extend(self._rule_semantic_screenshot(report))
         candidates.extend(self._rule_neural_medical(report))
@@ -113,6 +114,21 @@ class StrategySelector:
                 estimated_ratio=120.0,
                 priority=2,
                 reason="CAD file — parametric extraction applicable.",
+            )]
+        return []
+
+    def _rule_semantic_json(self, report: "AnalysisReport") -> list[StrategyCandidate]:
+        fmt = report.format
+        if fmt.type in ("JSON", "CSV") or fmt.mime_type in (
+            "application/json", "text/csv"
+        ):
+            # Larger files benefit more from columnar encoding
+            ratio = 80.0 if report.file_size > 50_000 else 30.0
+            return [StrategyCandidate(
+                strategy_name="semantic_json",
+                estimated_ratio=ratio,
+                priority=2,
+                reason=f"Structured data ({fmt.type}) — columnar semantic encoding.",
             )]
         return []
 

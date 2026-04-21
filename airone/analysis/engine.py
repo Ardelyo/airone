@@ -169,6 +169,13 @@ class AnalysisEngine:
                 hints.append("procedural_vector")
                 notes.append("Logo detected — vector optimization possible.")
 
+        # --- Structured data (JSON / CSV) ---
+        if report.format.type in ("JSON", "CSV") or report.format.mime_type in (
+            "application/json", "text/csv"
+        ):
+            hints.append("semantic_json")
+            notes.append("Structured data detected — columnar semantic compression applicable.")
+
         # --- Document-specific ---
         if report.format.type == "PDF":
             hints.append("semantic_pdf")

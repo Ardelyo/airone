@@ -17,6 +17,7 @@ from airone.compressors.traditional.lzma import LZMACompressor
 from airone.compressors.procedural.gradient import GradientCompressor
 from airone.compressors.traditional.zstd import ZstdCompressor
 from airone.compressors.semantic.pdf import PDFSemanticCompressor
+from airone.compressors.semantic.json_semantic import SemanticJSONCompressor
 from airone.core.file_format import AirFileFormat
 from airone.core.verification import verify_lossless
 from airone.exceptions import CompressionError, VerificationError
@@ -40,6 +41,7 @@ def _build_default_registry() -> StrategyRegistry:
     registry.register(LZMACompressor())
     registry.register(GradientCompressor())
     registry.register(PDFSemanticCompressor())
+    registry.register(SemanticJSONCompressor())
     return registry
 
 

@@ -181,32 +181,65 @@ airone/
 
 ---
 
-## 🖼️ Visual Benchmarking
+## 🖼️ Visual Benchmarking & Research Data
 
-AirOne is designed for **High-Fidelity Document Archival**. We guarantee pixel-perfect restoration for all semantic and neural codecs.
+> Research-grade visualizations generated from live benchmark runs on the AirOne v1.0 platform.
 
-### 1. High-Resolution Photography
-AirOne preserves 100% of the visual data in high-res photographs while optimizing the container size.
+---
 
-| Metric | Result |
-| :--- | :--- |
-| **Original Format** | PNG (8-bit RGB) |
-| **Fidelity** | **Pixel-Perfect (Infinity PSNR)** |
-| **Restoration** | 1:1 Bit-Exact Pixels |
-| **Compression Ratio** | 1.05x (ZSTD Optimized) |
+### 📊 Research Dashboard (Summary)
 
-> [!TIP]
-> Use AirOne for photographs when metadata preservation and archival integrity are the top priorities.
+<p align="center">
+  <img src="assets/bench_research_dashboard.png" alt="AirOne Research Dashboard" width="100%" />
+</p>
 
-### 2. Procedural Document Elements
-For gradients and UI elements, AirOne's procedural engine achieves massive reductions by storing the *generating parameters* instead of raw pixels.
+---
 
-| Feature | Performance |
-| :--- | :--- |
-| **Strategy** | `procedural_gradient` |
-| **Ratio** | **640x - 2500x** |
-| **Fidelity** | Visually Identical (±2 tolerance) |
-| **Output** | High-Res 4K Reconstruction |
+### 📈 Compression Ratios by Strategy
+
+<p align="center">
+  <img src="assets/bench_compression_ratios.png" alt="Compression Ratios" width="90%" />
+</p>
+
+> **Note:** The Procedural Gradient strategy achieves 640× compression by storing parametric parameters (start color, end color, size) instead of raw pixel data.
+
+---
+
+### ⚡ Speed vs. Compression Ratio (Pareto Frontier)
+
+<p align="center">
+  <img src="assets/bench_speed_scatter.png" alt="Speed vs Ratio Scatter" width="90%" />
+</p>
+
+> ZSTD-19 sits in the sweet spot — high ratio with reasonable speed. Procedural strategy dominates both axes for gradients.
+
+---
+
+### 🎯 Strategy Selection Heatmap
+
+<p align="center">
+  <img src="assets/bench_strategy_heatmap.png" alt="Strategy Heatmap" width="90%" />
+</p>
+
+> The AirOne Analysis Engine automatically routes each file type to its optimal strategy. Higher scores (warmer color) indicate a better fit.
+
+---
+
+### 📦 File Size Savings: Original vs. Compressed
+
+<p align="center">
+  <img src="assets/bench_size_waterfall.png" alt="File Size Savings" width="90%" />
+</p>
+
+---
+
+### 🔬 Lossless Pixel-Perfect Proof (Before / After)
+
+<p align="center">
+  <img src="assets/bench_visual_comparison.png" alt="Visual Lossless Comparison" width="100%" />
+</p>
+
+> **Left:** Original photograph. **Centre:** Restored from `.air` container. **Right:** Pixel difference map (magnified 8×). The difference image is fully black — confirming **Infinity PSNR** and zero data loss.
 
 ---
 

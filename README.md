@@ -2,10 +2,16 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" />
-  <img src="https://img.shields.io/badge/tests-141%20passing-brightgreen.svg" />
+  <img src="https://img.shields.io/badge/tests-146%20passing-brightgreen.svg" />
   <img src="https://img.shields.io/badge/python-3.8%2B-blue.svg" />
   <img src="https://img.shields.io/badge/license-MIT-green.svg" />
   <img src="https://img.shields.io/badge/lossless-100%25-brightgreen.svg" />
+  <img src="https://img.shields.io/badge/report-Technical%20PDF-orange.svg" />
+</p>
+
+<p align="center">
+  <b>📄 <a href="docs/AirOne_Technical_Report_v1.0.docx">Download Full Technical Report (DOCX, Bilingual EN+ID)</a></b><br/>
+  <i>by Ardellio Satria Anindito — 16 years old</i>
 </p>
 
 > **AirOne** is a production-ready, multi-layer intelligent compression platform that understands what it compresses. It achieves **up to 25× compression** on text, **100% lossless** fidelity on all file types, and **O(n) scaling** to millions of files using MinHash LSH.

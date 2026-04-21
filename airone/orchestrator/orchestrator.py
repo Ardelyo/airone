@@ -7,6 +7,7 @@ Drives the full compression pipeline end-to-end:
 from __future__ import annotations
 
 import time
+from dataclasses import dataclass
 from typing import Optional
 
 from airone.analysis.engine import AnalysisEngine, AnalysisReport
@@ -21,6 +22,15 @@ from airone.core.verification import verify_lossless
 from airone.exceptions import CompressionError, VerificationError
 from airone.strategy.registry import StrategyRegistry
 from airone.strategy.selector import StrategySelector
+
+
+@dataclass
+class AirOneConfig:
+    """Production configuration for AirOne."""
+    excellent_ratio_threshold: float = 50.0
+    always_verify:             bool  = True
+    memory_budget_mb:          int   = 512
+    max_threads:              int   = 4
 
 
 def _build_default_registry() -> StrategyRegistry:
@@ -53,14 +63,12 @@ class CompressionOrchestrator:
     def __init__(
         self,
         registry: Optional[StrategyRegistry] = None,
-        excellent_ratio_threshold: float = 50.0,
-        always_verify: bool = True,
+        config:   Optional[AirOneConfig] = None,
     ) -> None:
         self._registry   = registry or _build_default_registry()
+        self._config     = config or AirOneConfig()
         self._analyser   = AnalysisEngine()
         self._selector   = StrategySelector(self._registry)
-        self._excellent  = excellent_ratio_threshold
-        self._verify     = always_verify
 
     # ------------------------------------------------------------------
     # Public API
@@ -86,11 +94,15 @@ class CompressionOrchestrator:
 
         for candidate in candidates:
             try:
+                # Memory safety check
+                if not self._is_memory_safe(candidate.strategy_name):
+                    continue
+
                 compressor = self._registry.get(candidate.strategy_name)
                 result = compressor.compress(raw_data, analysis)
 
                 # Lossless verification
-                if self._verify:
+                if self._config.always_verify:
                     decompressed = compressor.decompress(
                         result.compressed_data, result.metadata
                     )
@@ -104,7 +116,7 @@ class CompressionOrchestrator:
                     best_result = result
 
                 # Early exit on excellent ratio
-                if result.ratio >= self._excellent:
+                if result.ratio >= self._config.excellent_ratio_threshold:
                     break
 
             except (CompressionError, VerificationError):
@@ -142,3 +154,27 @@ class CompressionOrchestrator:
     def analyse_file(self, file_path: str) -> AnalysisReport:
         """Public wrapper around the analysis engine."""
         return self._analyser.analyse(file_path)
+
+    def _is_memory_safe(self, strategy_name: str) -> bool:
+        """
+        Heuristic check: can we afford to run this strategy?
+        LZMA requires ~100MB; Zstd/Brotli ~10MB.
+        """
+        import psutil
+        
+        mem = psutil.virtual_memory()
+        available_mb = mem.available / (1024 * 1024)
+        
+        # Required memory estimate (rough defaults)
+        required = 10.0
+        if "lzma" in strategy_name.lower():
+            required = 100.0  # Heuristic for level 6-9
+        
+        # Enforce both config budget and physical availability
+        if required > self._config.memory_budget_mb:
+            return False
+            
+        if available_mb < required:
+            return False
+            
+        return True

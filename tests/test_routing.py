@@ -8,10 +8,10 @@ from airone.compressors.procedural.gradient import GradientCompressor
 
 def test_gradient_routing():
     """Verify that a gradient image routes to procedural_gradient correctly."""
-    gradient_path = CORPUS_DIR / "gradient_512.png"
+    gradient_path = CORPUS_DIR / "gradient_4096.png"
     if not gradient_path.exists():
         CORPUS_DIR.mkdir(parents=True, exist_ok=True)
-        gradient_path.write_bytes(gen_gradient_png())
+        gradient_path.write_bytes(gen_gradient_png(width=4096, height=4096))
 
     orch = CompressionOrchestrator()
     analysis = orch.analyse_file(str(gradient_path))
@@ -33,7 +33,8 @@ def test_gradient_routing():
     try:
         result = orch.compress_file(str(gradient_path), out_path)
         assert result.strategy_name == "procedural_gradient"
-        assert result.ratio > 100.0   # Should get massive ratio (tested > 640x)
+        # On a large image: gradient_params are ~200 bytes vs MB of raw pixels
+        assert result.ratio > 200.0
     finally:
         if os.path.exists(out_path):
             os.remove(out_path)

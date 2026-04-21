@@ -1,0 +1,4 @@
+This is an example test text file.
+It contains some repeated words like word word word and some text text text.
+We will compress this file and then decompress it to verify lossless reconstruction.
+AirOne Intelligent Semantic Compression Platform.

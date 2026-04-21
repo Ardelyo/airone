@@ -299,9 +299,9 @@ class ImageClassifier:
         scores: dict[ContentType, float] = {t: 0.0 for t in ContentType}
 
         # --- GRADIENT ---
-        # Very low unique colour ratio + moderate spatial uniformity + low edge density
-        if f.unique_color_ratio < 0.01 and f.spatial_uniformity > 0.4 and f.edge_density < 0.05:
-            scores[ContentType.GRADIENT] += 3.0
+        # Gradients typically have a very high stripe score (horizontal or vertical) and very low edge density
+        if (f.horizontal_stripe_score > 0.95 or f.vertical_stripe_score > 0.95) and f.edge_density < 0.05:
+            return ContentType.GRADIENT, 1.0
 
         # --- SCREENSHOT ---
         # Stripe patterns, limited palette, sharp edges, transparency unlikely

@@ -105,9 +105,10 @@ def gen_gradient_png(width: int = 512, height: int = 512) -> bytes:
         pixels = img.load()
         for x in range(width):
             for y in range(height):
-                r = int(x / width * 255)
-                g = int(y / height * 255)
-                b = int((x + y) / (width + height) * 255)
+                # A 1D horizontal gradient so GradientCompressor can compress it
+                r = int((x / width) * 255)
+                g = 100
+                b = 150
                 pixels[x, y] = (r, g, b)
         buf = io.BytesIO()
         img.save(buf, format="PNG")

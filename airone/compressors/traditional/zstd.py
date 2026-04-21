@@ -3,35 +3,35 @@ from ..base import BaseCompressor, CompressionResult
 import time
 
 class ZstdCompressor(BaseCompressor):
-    name = "traditional_zstd"
-    
+
+    def __init__(self, level: int = 19) -> None:
+        self._level = level
+
     @property
     def name(self) -> str:
         return "traditional_zstd"
-    
+
     def can_handle(self, analysis):
         return True  # Can compress anything
-    
+
     def estimate_ratio(self, analysis):
-        # Simple heuristic based on entropy
         if analysis and hasattr(analysis, 'entropy'):
-            # Lower entropy = better compression
             return max(1.0, 8.0 - analysis.entropy)
-        return 2.0  # Default estimate
-    
+        return 2.0
+
     def compress(self, data: bytes, analysis=None) -> CompressionResult:
         start = time.time()
-        
-        compressor = zstd.ZstdCompressor(level=19)
+
+        compressor = zstd.ZstdCompressor(level=self._level)
         compressed = compressor.compress(data)
-        
+
         return CompressionResult(
             compressed_data=compressed,
             original_size=len(data),
             compressed_size=len(compressed),
             strategy_name=self.name,
             execution_time=time.time() - start,
-            metadata={"level": 19}
+            metadata={"level": self._level}
         )
     
     def decompress(self, compressed_data: bytes, metadata: dict) -> bytes:
